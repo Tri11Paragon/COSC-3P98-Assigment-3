@@ -1,0 +1,15 @@
+# ninja log v5
+1	907	1680236630945478130	CMakeFiles/assign3.dir/src/main.cpp.o	56e91fbab9fa671a
+1	242	1680234245391353248	libs/BLT/libBLT.a	5b297dea71d70777
+1	1057	1680234237567133437	libs/BLT/CMakeFiles/BLT.dir/src/blt/std/loader.cpp.o	2c0d4eba20f893e5
+1	2709	1680236632749528215	CMakeFiles/assign3.dir/src/modes/basic.cpp.o	7e2ac70ec21c0d5d
+0	3820	1680234240331211091	CMakeFiles/assign3.dir/src/texture.cpp.o	49a0ed6b07050ac8
+1	477	1680234236987117141	libs/BLT/CMakeFiles/BLT.dir/src/blt/nbt/nbt.cpp.o	1114920e4ed538e
+1	602	1680234237111120625	libs/BLT/CMakeFiles/BLT.dir/src/blt/std/system.cpp.o	f666582e516174c
+0	273	1680234236783111407	libs/BLT/CMakeFiles/BLT.dir/src/blt/std/filesystem.cpp.o	a9bed6c7f48ac6b
+1	645	1680236630685470913	CMakeFiles/assign3.dir/src/modes/advanced.cpp.o	997371f4e60fc433
+1	1216	1680234237727137929	libs/BLT/CMakeFiles/BLT.dir/src/blt/std/logging.cpp.o	c58eafc338bad0a7
+1	1846	1680234238355155577	libs/BLT/CMakeFiles/BLT.dir/src/blt/profiling/profiler.cpp.o	235c5c915ef49473
+1	356	1680234236867113770	libs/BLT/CMakeFiles/BLT.dir/src/blt/nbt/nbt_block.cpp.o	d8de53d2937e79bb
+1	690	1680234237199123098	libs/BLT/CMakeFiles/BLT.dir/src/blt/std/format.cpp.o	b5b9d1f754925785
+2709	2787	1680236632825530323	assign3	ff555d494b8503ae
