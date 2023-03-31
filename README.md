@@ -1,9 +1,11 @@
 # Readme
+- Jacob wanted to see it.
 - the readme is a WIP
 - freeglut is required. 
 	- install with `sudo apt install freeglut3-dev`
 - build with:
-	- clone the repo
+	- `git clone --recursive https://github.com/Tri11Paragon/COSC-3P98-Assigment-3.git`
+	- `cd COSC-3P98-Assigment-3/`
 	- `mkdir build && cd build/`
 	- `cmake -DCMAKE_BUILD_TYPE=Release ../`
 	- `make -j 16`
