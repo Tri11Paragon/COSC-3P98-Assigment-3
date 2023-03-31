@@ -1,6 +1,0 @@
-/home/brett/Documents/Brock/CS 3P98/Assignment 3/cmake-build-relwithdebinfo/CMakeFiles/assign3.dir
-/home/brett/Documents/Brock/CS 3P98/Assignment 3/cmake-build-relwithdebinfo/CMakeFiles/edit_cache.dir
-/home/brett/Documents/Brock/CS 3P98/Assignment 3/cmake-build-relwithdebinfo/CMakeFiles/rebuild_cache.dir
-/home/brett/Documents/Brock/CS 3P98/Assignment 3/cmake-build-relwithdebinfo/libs/BLT/CMakeFiles/BLT.dir
-/home/brett/Documents/Brock/CS 3P98/Assignment 3/cmake-build-relwithdebinfo/libs/BLT/CMakeFiles/edit_cache.dir
-/home/brett/Documents/Brock/CS 3P98/Assignment 3/cmake-build-relwithdebinfo/libs/BLT/CMakeFiles/rebuild_cache.dir
