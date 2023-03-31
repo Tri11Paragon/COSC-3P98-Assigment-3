@@ -1,0 +1,11 @@
+# Readme
+- the readme is a WIP
+- freeglut is required. 
+	- install with `sudo apt install freeglut3-dev`
+- build with:
+	- clone the repo
+	- `mkdir build && cd build/`
+	- `cmake -DCMAKE_BUILD_TYPE=Release ../`
+	- `make -j 16`
+	- `./assign3`
+- stay tuned for the high performance mode
