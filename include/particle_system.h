@@ -92,6 +92,7 @@ class particle_system {
         particle_system(
                 const blt::vec3& position, const blt::vec3& direction, float spread, int pps
         ): position(position), direction(direction), spread(spread), pps(pps) {
+#ifndef EXTRAS
             quad = glGenLists(1);
             glNewList(quad, GL_COMPILE);
             glBegin(GL_QUADS);
@@ -105,6 +106,7 @@ class particle_system {
             glVertex3f(s, s, 0);
             glEnd();
             glEndList();
+#endif
         }
         
         void update(camera& cam, float bnx, float bnz, float bpx, float bpz) {
@@ -173,6 +175,7 @@ class particle_system {
         }
         
         inline static void applyBillboard() {
+#ifndef EXTRAS
             GLfloat m[16];
             glMatrixMode(GL_MODELVIEW);
             glGetFloatv(GL_MODELVIEW_MATRIX, m);
@@ -187,9 +190,11 @@ class particle_system {
             }
             
             glLoadMatrixf(m);
+#endif
         }
         
         void render(camera& cam, texture** textures) {
+#ifndef EXTRAS
             glMatrixMode(GL_MODELVIEW);
             // by batching particles by texture we save a little driver overhead
             for (auto& pair : particles) {
@@ -243,6 +248,7 @@ class particle_system {
                 str << (randomizeTexture ? "True" : "False");
                 glutSetWindowTitle(str.str().c_str());
             }
+#endif
         }
         
         void randomizeSpeed(float n) {

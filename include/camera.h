@@ -6,10 +6,10 @@
 #ifndef ASSIGN3_CAMERA_H
 #define ASSIGN3_CAMERA_H
 
-#include <cmath>
-#include <blt/math/vectors.h>
 #include <GL/glut.h>
 #include <GL/freeglut.h>
+#include <cmath>
+#include <blt/math/vectors.h>
 #include <util.h>
 #include "blt/std/logging.h"
 
@@ -29,6 +29,7 @@ class camera {
         
         const float MAX_SPEED = 100;
         const float DEFAULT_SPEED = 50;
+        const float MIN_SPEED = 1;
         const float ROTATION_SPEED = 3;
         
         float cur_speed = DEFAULT_SPEED;
@@ -106,7 +107,14 @@ class camera {
                 rotation[2] += (-(float) horzSpeed * delta * ROTATION_SPEED);
             else if (specialState[GLUT_KEY_RIGHT])
                 rotation[2] += ((float) horzSpeed * delta * ROTATION_SPEED);
-    
+            
+            if (specialState[GLUT_KEY_F1])
+                cur_speed = DEFAULT_SPEED;
+            if (specialState[GLUT_KEY_F2])
+                cur_speed = MIN_SPEED;
+            if (specialState[GLUT_KEY_F3])
+                cur_speed = MAX_SPEED;
+            
             if (rotation[2] > 360)
                 rotation[2] = 0;
             if (rotation[2] < 0)

@@ -798,8 +798,8 @@ static int stbi__sse2_available(void)
 //
 //  stbi__context struct and start_xxx functions
 
-// stbi__context structure is our modes context used by all images, so it
-// contains all the IO context, plus some modes image information
+// stbi__context structure is our basic context used by all images, so it
+// contains all the IO context, plus some basic image information
 typedef struct
 {
    stbi__uint32 img_x, img_y;
@@ -2983,7 +2983,7 @@ static int stbi__parse_entropy_coded_data(stbi__jpeg *z)
                for (k=0; k < z->scan_n; ++k) {
                   int n = z->order[k];
                   // scan out an mcu's worth of this component; that's just determined
-                  // by the modes H and V specified for the component
+                  // by the basic H and V specified for the component
                   for (y=0; y < z->img_comp[n].v; ++y) {
                      for (x=0; x < z->img_comp[n].h; ++x) {
                         int x2 = (i*z->img_comp[n].h + x)*8;
@@ -3043,7 +3043,7 @@ static int stbi__parse_entropy_coded_data(stbi__jpeg *z)
                for (k=0; k < z->scan_n; ++k) {
                   int n = z->order[k];
                   // scan out an mcu's worth of this component; that's just determined
-                  // by the modes H and V specified for the component
+                  // by the basic H and V specified for the component
                   for (y=0; y < z->img_comp[n].v; ++y) {
                      for (x=0; x < z->img_comp[n].h; ++x) {
                         int x2 = (i*z->img_comp[n].h + x);
@@ -5471,7 +5471,7 @@ static void *stbi__bmp_parse_header(stbi__context *s, stbi__bmp_data *info)
    if (hsz != 12) {
       int compress = stbi__get32le(s);
       if (compress == 1 || compress == 2) return stbi__errpuc("BMP RLE", "BMP type not supported: RLE");
-      if (compress >= 4) return stbi__errpuc("BMP JPEG/PNG", "BMP type not supported: unsupported compression"); // this includes PNG/JPEG modes
+      if (compress >= 4) return stbi__errpuc("BMP JPEG/PNG", "BMP type not supported: unsupported compression"); // this includes PNG/JPEG basic
       if (compress == 3 && info->bpp != 16 && info->bpp != 32) return stbi__errpuc("bad BMP", "bad BMP"); // bitfields requires 16 or 32 bits/pixel
       stbi__get32le(s); // discard sizeof
       stbi__get32le(s); // discard hres
@@ -5912,7 +5912,7 @@ static void *stbi__tga_load(stbi__context *s, int *x, int *y, int *comp, int req
    if ( tga_indexed ) tga_comp = stbi__tga_get_comp(tga_palette_bits, 0, &tga_rgb16);
    else tga_comp = stbi__tga_get_comp(tga_bits_per_pixel, (tga_image_type == 3), &tga_rgb16);
 
-   if(!tga_comp) // shouldn't really happen, stbi__tga_test() should have ensured modes consistency
+   if(!tga_comp) // shouldn't really happen, stbi__tga_test() should have ensured basic consistency
       return stbi__errpuc("bad format", "Can't find out TGA pixelformat");
 
    //   tga info
@@ -6173,7 +6173,7 @@ static void *stbi__psd_load(stbi__context *s, int *x, int *y, int *comp, int req
    if (stbi__get16be(s) != 3)
       return stbi__errpuc("wrong color format", "PSD is not in RGB color format");
 
-   // Skip the Mode Data.  (It's the palette for indexed color; other info for other modes.)
+   // Skip the Mode Data.  (It's the palette for indexed color; other info for other basic.)
    stbi__skip(s,stbi__get32be(s) );
 
    // Skip the image resources.  (resolution, pen tool paths, etc)

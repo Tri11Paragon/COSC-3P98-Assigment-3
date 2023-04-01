@@ -19,7 +19,15 @@ set(CMAKE_CXX_STANDARD 17)
 # I like absolute directories since I think relative file paths are ugly and hard to read
 include_directories(include)
 include_directories(${CMAKE_BINARY_DIR}/include/)
-file(GLOB_RECURSE SRC_FILES "src/*.cpp")
+#file(GLOB_RECURSE SRC_FILES "src/*.cpp")
+
+# don't try to build other mode's files as we will use the same names of functions to make it easier
+# we have to do this because GL
+if (${EXTRAS})
+    file(GLOB SRC_FILES "src/*.cpp" "src/high_perf/*.cpp")
+else ()
+    file(GLOB SRC_FILES "src/*.cpp" "src/basic/*.cpp")
+endif ()
 
 # Include my utility library
 add_subdirectory(libs/BLT)

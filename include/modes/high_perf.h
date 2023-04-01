@@ -4,17 +4,20 @@
  * See LICENSE file for license detail
  */
 
-#ifndef ASSIGN3_ADVANCED_H
-#define ASSIGN3_ADVANCED_H
+#ifndef ASSIGN3_HIGH_PERF_H
+#define ASSIGN3_HIGH_PERF_H
 
 #include <glad/gl.h>
 #include <camera.h>
 #include <particle_system.h>
 
-extern particle_system* fountain;
+#ifdef EXTRAS
+
 extern int WINDOW_WIDTH;
 extern int WINDOW_HEIGHT;
+extern particle_system* fountain;
 extern camera cam;
+extern const unsigned int particle_count;
 
 void window_resize(int width, int height);
 
@@ -26,4 +29,6 @@ void init();
 
 void cleanup();
 
-#endif //ASSIGN3_ADVANCED_H
+#endif
+
+#endif //ASSIGN3_HIGH_PERF_H

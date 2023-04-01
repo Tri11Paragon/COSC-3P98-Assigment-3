@@ -1,10 +1,12 @@
 #define GLAD_GL_IMPLEMENTATION
 #include <config.h>
 #ifdef EXTRAS
-    #include <modes/advanced.h>
+    //#include <modes/basic.h>
+    #include <modes/high_perf.h>
 #else
     #include <modes/basic.h>
 #endif
+
 #include <camera.h>
 #include <blt/std/logging.h>
 
@@ -40,6 +42,16 @@ void render_i(){
     updateView();
     
     render();
+
+#ifdef EXTRAS
+    std::stringstream str;
+    str << WINDOW_TITLE;
+    str << " | Particle Count: ";
+    str << particle_count;
+    str << " | FPS: ";
+    str << 1000000000.0 / (double)getDelta();
+    glutSetWindowTitle(str.str().c_str());
+#endif
     
     glutSwapBuffers();
     cam.inputUpdate();
@@ -54,7 +66,6 @@ int main(int argc, char** argv) {
     logging_properties.m_logFullPath = false;
     
     blt::logging::init(logging_properties);
-    
     
     // BLT logging functions are designed to operate one call per line of text. Thus use formatting for all uses
     // (\n is implicitly added, if the last character in the format string is \n, it will be ignored!)
@@ -83,9 +94,14 @@ int main(int argc, char** argv) {
     
     // create the display
     glutInit(&argc, argv);
+#ifdef EXTRAS
+    glutInitContextVersion(4, 6);
+    glutInitContextProfile(GLUT_CORE_PROFILE);
+    glutInitContextFlags(GLUT_FORWARD_COMPATIBLE);
+#endif
     glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
     glutSetOption(GLUT_MULTISAMPLE, 8);
-    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_MULTISAMPLE | GLUT_DEPTH);
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_MULTISAMPLE | GLUT_DEPTH);
     glutCreateWindow(WINDOW_TITLE.c_str());
     BLT_DEBUG("Window successfully created!");
     
@@ -161,7 +177,7 @@ int main(int argc, char** argv) {
     
     init();
     
-    fountain = new particle_system({0, 1, 0}, {0, 1, 0}, 4.5, 100);
+    fountain = new particle_system({0, 1, 0}, {0, 1, 0}, 4.5, 5000);
     
     BLT_DEBUG("Resource initialization complete!");
     

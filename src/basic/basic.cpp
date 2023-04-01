@@ -5,7 +5,7 @@
  */
 #include <modes/basic.h>
 
-#ifndef EXTRAS
+//#ifndef EXTRAS
     texture* world_floor;
     texture* particle_tex[10];
     
@@ -64,4 +64,4 @@
     void cleanup() {
         delete world_floor;
     }
-#endif
+//#endif

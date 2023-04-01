@@ -32,6 +32,10 @@ typedef struct {
     float x, y, z;
 } vec;
 
+typedef struct {
+    float x, y, z, w;
+} vec4;
+
 inline vec operator+(const vec& l, const vec& r) {
     return {l.x + r.x, l.y + r.y, l.z + r.z};
 }
