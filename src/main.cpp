@@ -160,6 +160,13 @@ int main(int argc, char** argv) {
     glutPassiveMotionFunc([](int x, int y) -> void {
         cam.mousePassiveMotion(x, y);
     });
+    glutCloseFunc([]() -> void {
+        BLT_DEBUG("Program has exited, cleaning up resources");
+        
+        cleanup();
+        
+        BLT_DEBUG("Cleanup complete, have a good day!");
+    });
     
     // display
     glutIdleFunc(render_i);
@@ -184,12 +191,6 @@ int main(int argc, char** argv) {
     BLT_DEBUG("Resource initialization complete!");
     
     glutMainLoop();
-    
-    BLT_DEBUG("Program has exited, cleaning up resources");
-    
-    cleanup();
-    
-    BLT_DEBUG("Cleanup complete, have a good day!");
 
     return 0;
 }

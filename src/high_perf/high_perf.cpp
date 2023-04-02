@@ -11,6 +11,7 @@
 #include "blt/std/memory.h"
 #include <shaders/vertex.vert>
 #include <shaders/fragment.frag>
+#include <blt/profiling/profiler.h>
 #include <shaders/physics.comp>
 #include <stb_image.h>
 #include <stb_image_resize.h>
@@ -115,8 +116,11 @@ void render() {
     perspectiveMatrix = blt::perspective(FOV, (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 1000.0f);
     auto pvm = perspectiveMatrix * viewMatrix;
     
+    BLT_START_INTERVAL("Particles", "Compute Shader");
     runPhysicsShader();
+    BLT_END_INTERVAL("Particles", "Compute Shader");
     
+    BLT_START_INTERVAL("Particles", "Render");
     instance_shader->bind();
     instance_shader->setMatrix("pvm", pvm);
     
@@ -126,7 +130,7 @@ void render() {
     glBindVertexArray(particleVAO);
     glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, particle_count);
     glBindVertexArray(0);
-    
+    BLT_END_INTERVAL("Particles", "Render");
 }
 
 void init() {
@@ -316,6 +320,7 @@ void init() {
 }
 
 void cleanup() {
+    BLT_PRINT_PROFILE("Particles", blt::logging::NONE, true);
     // cleanup opengl resources
     glDeleteVertexArrays(1, &particleVAO);
     glDeleteBuffers(1, &particleTranslationsBuffer);
