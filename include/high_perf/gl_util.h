@@ -14,6 +14,25 @@
 #include <unordered_map>
 
 /**
+ * This part was made for this assignment and will likely be used in future projects
+ */
+class compute_shader {
+    private:
+        GLuint shaderID = 0;
+        GLuint programID = 0;
+    public:
+        explicit compute_shader(const std::string& shader_source, bool loadAsString = true);
+        inline void bind() const {
+            glUseProgram(programID);
+        }
+        inline void execute(int x, int y, int z) const {
+            bind();
+            glDispatchCompute(x, y, z);
+        }
+        ~compute_shader();
+};
+
+/**
  * Note: This is taken from my final project,
  * https://github.com/Tri11Paragon/COSC-3P98-Final-Project/blob/main/include/render/gl.h
  */
@@ -24,16 +43,16 @@ class shader {
             GLint i = -1;
         };
         // we can have shaders of many types in OpenGL
-        unsigned int programID = 0;
+        GLuint programID = 0;
         // but we will only make use of these two for now
-        unsigned int vertexShaderID = 0;
-        unsigned int fragmentShaderID = 0;
+        GLuint vertexShaderID = 0;
+        GLuint fragmentShaderID = 0;
         // while these will remain unused. (Webgl2 apparently doesn't support them despite being based on GL4.3? that's a TODO!)
-        unsigned int geometryShaderID = 0;
+        GLuint geometryShaderID = 0;
         // this would be very useful however it is highly unlikely webgl will support it
         // im leaving some of this stuff in here because I might expand the native application to use some of it.
         // im trying to keep the web and native versions the same though
-        unsigned int tessellationShaderID = 0;
+        GLuint tessellationShaderID = 0;
         std::unordered_map<std::string, IntDefaultedToMinusOne> uniformVars;
         
         static unsigned int createShader(const std::string& source, int type);
@@ -46,18 +65,6 @@ class shader {
             int loc = glGetUniformLocation(programID, name.c_str());
             uniformVars[name].i = loc;
             return loc;
-        }
-        
-        static inline std::string removeEmptyFirstLines(const std::string& string){
-            auto lines = blt::string::split(string, "\n");
-            std::string new_source_string;
-            for (const auto& line : lines) {
-                if (!line.empty() && !blt::string::contains(line, "\"")) {
-                    new_source_string += line;
-                    new_source_string += "\n";
-                }
-            }
-            return new_source_string;
         }
     
     public:
@@ -119,12 +126,6 @@ class shader {
         inline void bind() const {
             glUseProgram(programID);
         }
-        
-        static void updateProjectionMatrix(const blt::mat4x4& projectionMatrix);
-        static void updateOrthographicMatrix(const blt::mat4x4& orthoMatrix);
-        static void updateViewMatrix(const blt::mat4x4& viewMatrix);
-        // returns the perspective view matrix which is calculated per frame. (This is for optimization)
-        static const blt::mat4x4& getPVM();
         
         ~shader();
 };

@@ -140,6 +140,8 @@ int main(int argc, char** argv) {
             fountain->toggleSpray();
         if (key == 't')
             fountain->toggleTexRandomizer();
+        if (key == 'p')
+            beginExecution();
     });
     glutSpecialFunc([](int k, int x, int y) -> void {
         cam.specialPress(k);

@@ -29,6 +29,10 @@ void init();
 
 void cleanup();
 
+void runPhysicsShader();
+
+void beginExecution();
+
 #endif
 
 #endif //ASSIGN3_HIGH_PERF_H

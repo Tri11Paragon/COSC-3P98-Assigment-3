@@ -12,6 +12,18 @@
  * https://github.com/Tri11Paragon/COSC-3P98-Final-Project/blob/main/include/render/gl.h
  */
 
+static inline std::string removeEmptyFirstLines(const std::string& string){
+    auto lines = blt::string::split(string, "\n");
+    std::string new_source_string;
+    for (const auto& line : lines) {
+        if (!line.empty() && !blt::string::contains(line, "\"")) {
+            new_source_string += line;
+            new_source_string += "\n";
+        }
+    }
+    return new_source_string;
+}
+
 unsigned int shader::createShader(const std::string& source, int type) {
     const char* shader_code = source.c_str();
     // creates a Shader
@@ -153,4 +165,54 @@ shader::shader(shader&& move) noexcept {
         uniformVars.insert(pair);
     // by setting the program ID to -1 we tell the shader it has been moved.
     move.programID = -1;
+}
+
+/**
+ * This part was made for this assignment and will likely be used in future projects
+ */
+
+compute_shader::compute_shader(const std::string& shader_source, bool loadAsString) {
+    int status;
+    std::string source;
+    const char* c_source;
+    
+    if (!loadAsString)
+        source = blt::fs::loadShaderFile(shader_source);
+    else
+        source = removeEmptyFirstLines(shader_source);
+    
+    c_source = source.c_str();
+    
+    shaderID = glCreateShader(GL_COMPUTE_SHADER);
+    
+    glShaderSource(shaderID, 1, &c_source, NULL);
+    glCompileShader(shaderID);
+    
+    glGetShaderiv(shaderID, GL_COMPILE_STATUS, &status);
+    if (!status){
+        int log_length = 0;
+        glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &log_length);
+        blt::scoped_buffer<GLchar> infoLog{static_cast<unsigned long>(log_length + 1)};
+        glGetShaderInfoLog(shaderID, log_length + 1, nullptr, infoLog.buffer);
+        BLT_ERROR("Unable to compile compute shader! (%d)", log_length);
+        BLT_ERROR(infoLog.buffer);
+    }
+    
+    programID = glCreateProgram();
+    glAttachShader(programID, shaderID);
+    glLinkProgram(programID);
+    
+    glGetProgramiv(shaderID, GL_LINK_STATUS, &status);
+    if (!status){
+        int log_length = 0;
+        glGetProgramiv(programID, GL_INFO_LOG_LENGTH, &log_length);
+        blt::scoped_buffer<GLchar> infoLog{static_cast<unsigned long>(log_length + 1)};
+        glGetProgramInfoLog(programID, log_length + 1, nullptr, infoLog.buffer);
+        BLT_ERROR("Unable to link compute shader!");
+        BLT_ERROR(infoLog.buffer);
+    }
+}
+
+compute_shader::~compute_shader() {
+    glDeleteShader(shaderID);
 }

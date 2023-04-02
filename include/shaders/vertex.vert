@@ -9,12 +9,14 @@ layout (location = 2) in vec4 pos;
 layout (location = 3) in vec4 dir;
 
 out vec2 uv_;
+out float index;
 
 uniform mat4 pvm;
 
 void main() {
     // passthough the UV (OpenGL interpolates this per fragment)
     uv_ = uv;
+    index = pos.w;
     // offset the vertex by the particle's position
     gl_Position = pvm * vec4(vertex + pos.xyz, 1.0);
 }

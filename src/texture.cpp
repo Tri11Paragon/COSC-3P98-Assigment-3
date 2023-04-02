@@ -5,6 +5,8 @@
 #include <texture.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
+#define STB_IMAGE_RESIZE_IMPLEMENTATION
+#include <stb_image_resize.h>
 
 
 texture* loadTexture(const std::string& path) {

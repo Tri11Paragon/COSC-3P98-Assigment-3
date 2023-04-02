@@ -1,0 +1,77 @@
+#ifdef __cplusplus
+#include <string>
+std::string shader_physics = R"("
+#version 460
+
+// execute 1 shader per particle. 128 executions per group
+layout (local_size_x = 128, local_size_y = 1, local_size_z = 1) in;
+
+// due to byte alignment, storing pos and dir as vec4 was required anyways.
+struct particle_t {
+    vec4 pos;
+    vec4 dir;
+};
+
+const int offset_size = 8192;
+const float SPEED = 1.0f;
+const float SPEED_FACTOR = 25.0f;
+const float BOUNCE_FACTOR = 0.75f;
+const float SPREAD = 4.5f;
+const float particle_lifetime = 10.0f;
+const vec2 p_min = vec2(-50, -50);
+const vec2 p_max = vec2(50, 50);
+const vec3 inital_pos = vec3(0.0f, 1.0f, 0.0f);
+const vec4 inital_dir = vec4(0.0f, 1.0f, 0.0f, 0.0f);
+const vec4 GRAVITY = vec4(0.0, -9.8, 0.0, 0.0);
+
+
+layout (std430, binding=0) buffer particle_buffer {
+    particle_t particles[];
+};
+
+layout (std430, binding=1) buffer offset_buffer {
+    vec4 offsets[offset_size];
+};
+
+layout(location=0) uniform float deltaSeconds;
+
+void resetParticle(uint i, float w) {
+    particles[i].dir = inital_dir * SPEED_FACTOR + offsets[i % offset_size] * SPREAD;
+    particles[i].pos = vec4(inital_pos, w);
+}
+
+bool checkBounds(vec2 pos) {
+    return pos.x > p_min.x && pos.y > p_min.y && pos.x < p_max.x && pos.y < p_max.y;
+}
+
+void main() {
+    uint i = gl_GlobalInvocationID.x;
+
+    vec4 pos = particles[i].pos;
+    vec4 dir = particles[i].dir;
+
+    dir.w += deltaSeconds;
+
+    if (dir.w > particle_lifetime) {
+        resetParticle(i, pos.w);
+        return;
+    }
+
+    pos += vec4(dir.xyz * SPEED * deltaSeconds, 0.0);
+    dir += vec4(GRAVITY.xyz * deltaSeconds, 0.0);
+
+    if (pos.y < 0 && checkBounds(pos.xy)) {
+        dir.y = -dir.y * BOUNCE_FACTOR;
+        pos.y = 0;
+    }
+
+    particles[i].dir = dir;
+    particles[i].pos = pos;
+
+    if (pos.y < -50)
+    resetParticle(i, pos.w);
+
+}
+
+")";
+#endif
