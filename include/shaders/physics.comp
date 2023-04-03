@@ -17,7 +17,7 @@ const float SPEED = 1.0f;
 const float SPEED_FACTOR = 25.0f;
 const float BOUNCE_FACTOR = 0.75f;
 const float SPREAD = 4.5f;
-const float particle_lifetime = 10.0f;
+const float particle_lifetime = 120.0f;
 const vec2 p_min = vec2(-50, -50);
 const vec2 p_max = vec2(50, 50);
 const vec3 inital_pos = vec3(0.0f, 1.0f, 0.0f);
@@ -33,7 +33,7 @@ layout (std430, binding=1) buffer offset_buffer {
     vec4 offsets[offset_size];
 };
 
-layout(location=0) uniform float deltaSeconds;
+uniform float deltaSeconds;
 
 void resetParticle(uint i, float w) {
     particles[i].dir = inital_dir * SPEED_FACTOR + offsets[i % offset_size] * SPREAD;

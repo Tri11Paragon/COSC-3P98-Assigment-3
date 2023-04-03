@@ -55,7 +55,7 @@ const unsigned int TEXTURE_WIDTH = 512;
 const unsigned int TEXTURE_HEIGHT = 512;
 
 // -------{Particles}-------
-const unsigned int particle_count = 128 * 10000;
+const unsigned int particle_count = 128 * 5000;
 const unsigned int offset_count = 8192;
 
 // generally alignment to multiples of 4 floats helps performance, plus we can use that extra space for info we need.
@@ -104,7 +104,7 @@ void runPhysicsShader(){
         return;
     
     physics_shader->bind();
-    glUniform1f(0, (float)((double) getDelta() / 1000000000.0));
+    physics_shader->setFloat("deltaSeconds", (float)((double) getDelta() / 1000000000.0));
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, particleTranslationsBuffer);
     physics_shader->execute(particle_count / 128, 1, 1);
     
@@ -161,7 +161,7 @@ void init() {
     blt::scoped_buffer<particle_record> translations{particle_count};
     blt::scoped_buffer<vec4> offsets{offset_count};
     blt::random<float> dir{-1, 1};
-    blt::random<float> lifetime{0, 25};
+    blt::random<float> lifetime{0, 120};
     
     BLT_TRACE("Creating particles");
     for (int i = 0; i < particle_count; i++)

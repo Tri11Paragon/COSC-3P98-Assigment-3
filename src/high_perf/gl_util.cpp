@@ -80,7 +80,7 @@ shader::shader(const std::string& vertex, const std::string& fragment, const std
     vertexShaderID = createShader(vertex_source, GL_VERTEX_SHADER);
     fragmentShaderID = createShader(fragment_source, GL_FRAGMENT_SHADER);
     if (load_geometry)
-        BLT_ERROR("Unable to load geometry shader because webgl doesn't support it!");
+        geometryShaderID = createShader(geometry_source, GL_GEOMETRY_SHADER);
     
     // bind them to a program
     programID = glCreateProgram();
