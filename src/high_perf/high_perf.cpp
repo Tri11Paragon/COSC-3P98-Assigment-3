@@ -3,7 +3,7 @@
  * Licensed under GNU General Public License V3.0
  * See LICENSE file for license detail
  */
-#include <locale.h>
+#include <clocale>
 #include <high_perf/gl_util.h>
 #include <modes/high_perf.h>
 #include <util.h>
@@ -11,6 +11,7 @@
 #include "blt/std/memory.h"
 #include <shaders/vertex.vert>
 #include <shaders/fragment.frag>
+#include <shaders/geometry.geom>
 #include <blt/profiling/profiler.h>
 #include <shaders/physics.comp>
 #include <stb_image.h>
@@ -55,7 +56,7 @@ const unsigned int TEXTURE_WIDTH = 512;
 const unsigned int TEXTURE_HEIGHT = 512;
 
 // -------{Particles}-------
-const unsigned int particle_count = 128 * 5000;
+const unsigned int particle_count = 128 * 50000;
 const unsigned int offset_count = 8192;
 
 // generally alignment to multiples of 4 floats helps performance, plus we can use that extra space for info we need.
@@ -116,19 +117,35 @@ void render() {
     perspectiveMatrix = blt::perspective(FOV, (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.1f, 1000.0f);
     auto pvm = perspectiveMatrix * viewMatrix;
     
+    auto inverseView = viewMatrix.transpose();
+    
+    // we need the up and right vectors for fast geometry shader billboard
+    // thankfully they are easy to extract from our view matrix.
+    blt::vec4 up {inverseView.m01(), inverseView.m11(), inverseView.m21()};
+    blt::vec4 right {inverseView.m00(), inverseView.m10(), inverseView.m20()};
+    
+//
+//    up = viewMatrix * up;
+//    right = viewMatrix * right;
+    
+    //BLT_TRACE("Up {%f, %f, %f} || Right {%f, %f, %f}", up.x(), up.y(), up.z(), right.x(), right.y(), right.z());
+    
     BLT_START_INTERVAL("Particles", "Compute Shader");
     runPhysicsShader();
     BLT_END_INTERVAL("Particles", "Compute Shader");
     
     BLT_START_INTERVAL("Particles", "Render");
     instance_shader->bind();
+    instance_shader->setVec4("up", up);
+    instance_shader->setVec4("right", right);
     instance_shader->setMatrix("pvm", pvm);
     
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D_ARRAY, textureArrayID);
     
     glBindVertexArray(particleVAO);
-    glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, particle_count);
+    //glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, particle_count);
+    glDrawArrays(GL_POINTS, 0, particle_count);
     glBindVertexArray(0);
     BLT_END_INTERVAL("Particles", "Render");
 }
@@ -195,31 +212,31 @@ void init() {
     BLT_TRACE("Uploading VBO data and assigning to VAO");
     glBindVertexArray(particleVAO);
     
-    // bind and upload vertices data to the GPU
-    glBindBuffer(GL_ARRAY_BUFFER, verticesVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 12, vertices, GL_STATIC_DRAW);
-    // tell OpenGL how to handle the vertex data when rendering the VAO, the vertices will be bound to slot 0.
-    // (we will tell OpenGL what variable uses slot 0 in the shader!)
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*) 0);
-    // tell OpenGL we will be using the first VAO slot, prevents us from having to call it before rendering
-    glEnableVertexAttribArray(0);
-    
-    
-    glBindBuffer(GL_ARRAY_BUFFER, uvsVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8, uvs, GL_STATIC_DRAW);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void*) 0);
-    glEnableVertexAttribArray(1);
+//    // bind and upload vertices data to the GPU
+//    glBindBuffer(GL_ARRAY_BUFFER, verticesVBO);
+//    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 12, vertices, GL_STATIC_DRAW);
+//    // tell OpenGL how to handle the vertex data when rendering the VAO, the vertices will be bound to slot 0.
+//    // (we will tell OpenGL what variable uses slot 0 in the shader!)
+//    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*) 0);
+//    // tell OpenGL we will be using the first VAO slot, prevents us from having to call it before rendering
+//    glEnableVertexAttribArray(0);
+//
+//
+//    glBindBuffer(GL_ARRAY_BUFFER, uvsVBO);
+//    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8, uvs, GL_STATIC_DRAW);
+//    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void*) 0);
+//    glEnableVertexAttribArray(1);
     
     int translations_size = sizeof(particle_record) * particle_count;
     glBindBuffer(GL_ARRAY_BUFFER, particleTranslationsBuffer);
     glBufferData(GL_ARRAY_BUFFER, translations_size, translations.buffer, GL_DYNAMIC_DRAW); // allocate some memory on the GPU
-    glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(particle_record), (void*) 0);
-    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(particle_record), (void*) offsetof(particle_record, dir));
+    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(particle_record), (void*) 0);
+    glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(particle_record), (void*) offsetof(particle_record, dir));
     // tells opengl that we want to present this data per 1 instance instead of per vertex.
-    glVertexAttribDivisor(2, 1);
-    glVertexAttribDivisor(3, 1);
-    glEnableVertexAttribArray(2);
-    glEnableVertexAttribArray(3);
+//    glVertexAttribDivisor(2, 1);
+//    glVertexAttribDivisor(3, 1);
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
     
     // allow the particle buffer to be used in the computer shader!
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, particleTranslationsBuffer);
@@ -230,8 +247,8 @@ void init() {
     glBufferData(GL_SHADER_STORAGE_BUFFER, offset_count * sizeof(vec4), offsets.buffer, GL_STATIC_DRAW);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, particleOffsetsBuffer);
     
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesEBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * 6, indices, GL_STATIC_DRAW);
+//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesEBO);
+//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * 6, indices, GL_STATIC_DRAW);
     
     
     // ----------------------------------
@@ -261,7 +278,7 @@ void init() {
     constexpr int channel_count = 4;
     
     int level = 0;
-    stbi_set_flip_vertically_on_load(true);
+    stbi_set_flip_vertically_on_load(false);
     for (const std::string& texture_loc : texture_locations){
         // load the texture
         int width, height, channels;
@@ -313,7 +330,7 @@ void init() {
     
     BLT_TRACE("Loading shaders");
     
-    instance_shader = new shader(shader_vert, shader_frag, "", true);
+    instance_shader = new shader(shader_vert, shader_frag, shader_geom, true);
     physics_shader = new compute_shader(shader_physics);
     
     BLT_DEBUG("High performance subsystem init complete!");
