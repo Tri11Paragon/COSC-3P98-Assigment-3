@@ -70,7 +70,7 @@ void main() {
     particles[i].pos = pos;
 
     if (pos.y < -50)
-    resetParticle(i, pos.w);
+        resetParticle(i, pos.w);
 
 }
 

@@ -1,0 +1,37 @@
+\begin{thebibliography}{1}
+
+\bibitem{computeshader}
+Mike Bailey.
+\newblock {OpenGL Compute Shaders}.
+\newblock
+  \url{"https://web.engr.oregonstate.edu/~mjb/cs519/Handouts/compute.shader.2pp.pdf"},
+  2021.
+\newblock Accessed: 2023-04-01.
+
+\bibitem{glref}
+Krnonos Group.
+\newblock {OpenGL Reference Manual}.
+\newblock \url{"https://registry.khronos.org/OpenGL-Refpages/gl4/"}, 2014.
+
+\bibitem{geometry}
+JeGX.
+\newblock {Particle Billboarding with the Geometry Shader}.
+\newblock
+  \url{"https://www.geeks3d.com/20140815/particle-billboarding-with-the-geometry-shader-glsl/"},
+  2014.
+
+\bibitem{amdprogram}
+Emil Persson.
+\newblock {ATI Radeon HD 2000 programming guide}.
+\newblock
+  \url{"https://web.archive.org/web/20160722164341/http://amd-dev.wpengine.netdna-cdn.com/wordpress/media/2012/10/ATI_Radeon_HD_2000_programming_guide.pdf"},
+  2007.
+
+\bibitem{gpuparticles}
+Gareth Thomas.
+\newblock {Compute-Based GPU Particle Systems}.
+\newblock
+  \url{"https://ubm-twvideo01.s3.amazonaws.com/o1/vault/GDC2014/Presentations/Gareth_Thomas_Compute-based_GPU_Particle.pdf"},
+  2014.
+
+\end{thebibliography}

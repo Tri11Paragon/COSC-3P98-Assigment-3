@@ -45,13 +45,16 @@ GLuint particleVAO;
 // -------{Textures}-------
 GLuint textureArrayID;
 
+// must make sure the texture list contains this number of textures otherwise weird errors will occur!
+// !*might not crash*!
 const unsigned int TEXTURE_COUNT = 10;
 const unsigned int TEXTURE_WIDTH = 512;
 const unsigned int TEXTURE_HEIGHT = 512;
 
 // -------{Particles}-------
-const unsigned int particle_count = 128 * 50000;
+const unsigned int particle_count = 128 * 5000; // must be a multiple of group size divisor!
 const unsigned int offset_count = 8192;
+const float particle_lifetime = 25.0f;
 
 // generally alignment to multiples of 4 floats helps performance, plus we can use that extra space for info we need.
 typedef struct {
@@ -149,7 +152,7 @@ void init() {
     blt::scoped_buffer<particle_record> translations{particle_count};
     blt::scoped_buffer<vec4> offsets{offset_count};
     blt::random<float> dir{-1, 1};
-    blt::random<float> lifetime{0, 25};
+    blt::random<float> lifetime{0, particle_lifetime};
     
     BLT_TRACE("Creating particles");
     for (int i = 0; i < particle_count; i++)
