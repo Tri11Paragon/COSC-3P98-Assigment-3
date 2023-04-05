@@ -15,8 +15,9 @@ void main() {
     //out_color = vec4(uv_, 0.0, 1.0);
     out_color = texture(texture_array, vec3(uv_, index));
 
-    if (out_color.a < 0.1)
-        discard;
+    // discard disables early depth testing!
+    //if (out_color.a < 0.1)
+    //    discard;
 }
 
 ")";

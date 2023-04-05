@@ -180,7 +180,12 @@ int main(int argc, char** argv) {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     glEnable(GL_BLEND);
+#ifdef EXTRAS
+    // we will handle most transparency in the shaders
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+#else
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+#endif
     
     BLT_DEBUG("GL setup complete!");
     

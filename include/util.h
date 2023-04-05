@@ -12,7 +12,7 @@
 #include <blt/math/vectors.h>
 #include <type_traits>
 
-const std::string WINDOW_TITLE = "Assignment 3: They said WHAT?!";
+const std::string WINDOW_TITLE = "Assignment 3: The Power Of Love";
 
 static constexpr int TARGET_FPS = 60;
 static constexpr float FOV = 90;

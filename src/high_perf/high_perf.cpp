@@ -16,10 +16,7 @@
 #include <shaders/physics.comp>
 #include <stb_image.h>
 #include <stb_image_resize.h>
-
-//static inline float degreesToRadian(float deg) {
-//    return deg * (float)M_PI / 180.0f;
-//}
+#include <filesystem>
 
 blt::mat4x4 createViewMatrix(){
     auto position = cam.getPosition();
@@ -41,9 +38,6 @@ void window_resize(int width, int height) {
 // -------{VBO}-------
 GLuint particleTranslationsBuffer;
 GLuint particleOffsetsBuffer;
-GLuint verticesVBO;
-GLuint uvsVBO;
-GLuint indicesEBO;
 
 // -------{VAO}-------
 GLuint particleVAO;
@@ -66,23 +60,6 @@ typedef struct {
     // dx dy dz (unused)
     vec4 dir;
 } particle_record;
-
-const float vertices[] = {
-        0.5f,  0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        -0.5f, -0.5f, 0.0f,
-        -0.5f,  0.5f, 0.0f
-};
-const float uvs[] = {
-        0, 0,
-        0, 1,
-        1, 1,
-        1, 0
-};
-const unsigned int indices[] = {
-        0, 1, 3,
-        1, 2, 3
-};
 
 blt::mat4x4 perspectiveMatrix;
 blt::mat4x4 viewMatrix;
@@ -123,12 +100,6 @@ void render() {
     // thankfully they are easy to extract from our view matrix.
     blt::vec4 up {inverseView.m01(), inverseView.m11(), inverseView.m21()};
     blt::vec4 right {inverseView.m00(), inverseView.m10(), inverseView.m20()};
-    
-//
-//    up = viewMatrix * up;
-//    right = viewMatrix * right;
-    
-    //BLT_TRACE("Up {%f, %f, %f} || Right {%f, %f, %f}", up.x(), up.y(), up.z(), right.x(), right.y(), right.z());
     
     BLT_START_INTERVAL("Particles", "Compute Shader");
     runPhysicsShader();
@@ -178,7 +149,7 @@ void init() {
     blt::scoped_buffer<particle_record> translations{particle_count};
     blt::scoped_buffer<vec4> offsets{offset_count};
     blt::random<float> dir{-1, 1};
-    blt::random<float> lifetime{0, 120};
+    blt::random<float> lifetime{0, 25};
     
     BLT_TRACE("Creating particles");
     for (int i = 0; i < particle_count; i++)
@@ -199,9 +170,6 @@ void init() {
     // create our VBOs
     glGenBuffers(1, &particleTranslationsBuffer);
     glGenBuffers(1, &particleOffsetsBuffer);
-    glGenBuffers(1, &verticesVBO);
-    glGenBuffers(1, &uvsVBO);
-    glGenBuffers(1, &indicesEBO);
     // create our texture
     glGenTextures(1, &textureArrayID);
     
@@ -212,29 +180,11 @@ void init() {
     BLT_TRACE("Uploading VBO data and assigning to VAO");
     glBindVertexArray(particleVAO);
     
-//    // bind and upload vertices data to the GPU
-//    glBindBuffer(GL_ARRAY_BUFFER, verticesVBO);
-//    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 12, vertices, GL_STATIC_DRAW);
-//    // tell OpenGL how to handle the vertex data when rendering the VAO, the vertices will be bound to slot 0.
-//    // (we will tell OpenGL what variable uses slot 0 in the shader!)
-//    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*) 0);
-//    // tell OpenGL we will be using the first VAO slot, prevents us from having to call it before rendering
-//    glEnableVertexAttribArray(0);
-//
-//
-//    glBindBuffer(GL_ARRAY_BUFFER, uvsVBO);
-//    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 8, uvs, GL_STATIC_DRAW);
-//    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void*) 0);
-//    glEnableVertexAttribArray(1);
-    
     int translations_size = sizeof(particle_record) * particle_count;
     glBindBuffer(GL_ARRAY_BUFFER, particleTranslationsBuffer);
     glBufferData(GL_ARRAY_BUFFER, translations_size, translations.buffer, GL_DYNAMIC_DRAW); // allocate some memory on the GPU
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(particle_record), (void*) 0);
     glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(particle_record), (void*) offsetof(particle_record, dir));
-    // tells opengl that we want to present this data per 1 instance instead of per vertex.
-//    glVertexAttribDivisor(2, 1);
-//    glVertexAttribDivisor(3, 1);
     glEnableVertexAttribArray(0);
     glEnableVertexAttribArray(1);
     
@@ -246,10 +196,6 @@ void init() {
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, particleOffsetsBuffer);
     glBufferData(GL_SHADER_STORAGE_BUFFER, offset_count * sizeof(vec4), offsets.buffer, GL_STATIC_DRAW);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, particleOffsetsBuffer);
-    
-//    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesEBO);
-//    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(float) * 6, indices, GL_STATIC_DRAW);
-    
     
     // ----------------------------------
     //             Texturing
@@ -274,19 +220,33 @@ void init() {
             "depression.png",
             "1665624414712991.jpg"
     };
+
+//    std::vector<std::string> texture_locations {};
+//    texture_locations.reserve(64);
+//    for (int i = 0; i < 64; i++)
+//        texture_locations.push_back(std::string("thinmatrix/fire_") += std::to_string(i) += ".png");
     
     constexpr int channel_count = 4;
     
     int level = 0;
     stbi_set_flip_vertically_on_load(false);
     for (const std::string& texture_loc : texture_locations){
+        auto resource_location = (std::string("resources/") += texture_loc);
+        
+        if (!std::filesystem::exists(resource_location)) {
+            BLT_FATAL("Unable to load file %s", resource_location.c_str());
+            std::abort();
+        }
+        
         // load the texture
         int width, height, channels;
         auto* data = stbi_load(
-                (std::string("resources/") += texture_loc).c_str(), &width, &height,
+                resource_location.c_str(), &width, &height,
                 &channels, channel_count
         );
         auto* resized_data = data;
+        
+        BLT_TRACE("Loading image %s width %d, %d width/height", resource_location.c_str(), width, height);
         
         // resize if necessary
         if (width != TEXTURE_WIDTH || height != TEXTURE_HEIGHT){
@@ -341,9 +301,7 @@ void cleanup() {
     // cleanup opengl resources
     glDeleteVertexArrays(1, &particleVAO);
     glDeleteBuffers(1, &particleTranslationsBuffer);
-    glDeleteBuffers(1, &verticesVBO);
-    glDeleteBuffers(1, &uvsVBO);
-    glDeleteBuffers(1, &indicesEBO);
+    glDeleteBuffers(1, &particleOffsetsBuffer);
     
     delete(instance_shader);
 }

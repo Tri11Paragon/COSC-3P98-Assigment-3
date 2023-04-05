@@ -17,11 +17,12 @@ const float SPEED = 1.0f;
 const float SPEED_FACTOR = 25.0f;
 const float BOUNCE_FACTOR = 0.75f;
 const float SPREAD = 4.5f;
-const float particle_lifetime = 120.0f;
-const vec2 p_min = vec2(-50, -50);
-const vec2 p_max = vec2(50, 50);
+const float particle_lifetime = 25.0f;
 const vec3 inital_pos = vec3(0.0f, 1.0f, 0.0f);
 const vec4 inital_dir = vec4(0.0f, 1.0f, 0.0f, 0.0f);
+
+const vec2 p_min = vec2(-50, -50);
+const vec2 p_max = vec2(50, 50);
 const vec4 GRAVITY = vec4(0.0, -9.8, 0.0, 0.0);
 
 
@@ -60,7 +61,7 @@ void main() {
     pos += vec4(dir.xyz * SPEED * deltaSeconds, 0.0);
     dir += vec4(GRAVITY.xyz * deltaSeconds, 0.0);
 
-    if (pos.y < 0 && checkBounds(pos.xy)) {
+    if (pos.y < 0 && checkBounds(pos.xz)) {
         dir.y = -dir.y * BOUNCE_FACTOR;
         pos.y = 0;
     }
