@@ -52,7 +52,7 @@ const unsigned int TEXTURE_WIDTH = 512;
 const unsigned int TEXTURE_HEIGHT = 512;
 
 // -------{Particles}-------
-const unsigned int particle_count = 128 * 5000; // must be a multiple of group size divisor!
+const unsigned int particle_count = 128 * 500; // must be a multiple of group size divisor!
 const unsigned int offset_count = 8192;
 const float particle_lifetime = 25.0f;
 

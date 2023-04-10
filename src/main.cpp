@@ -140,8 +140,10 @@ int main(int argc, char** argv) {
             fountain->toggleSpray();
         if (key == 't')
             fountain->toggleTexRandomizer();
+#ifdef EXTRAS
         if (key == 'p')
             beginExecution();
+#endif
     });
     glutSpecialFunc([](int k, int x, int y) -> void {
         cam.specialPress(k);
@@ -191,7 +193,7 @@ int main(int argc, char** argv) {
     
     init();
     
-    fountain = new particle_system({0, 1, 0}, {0, 1, 0}, 4.5, 5000);
+    fountain = new particle_system({0, 1, 0}, {0, 1, 0}, 4.5, 500);
     
     BLT_DEBUG("Resource initialization complete!");
     

@@ -20,7 +20,8 @@
 \contentsline {subsection}{\numberline {2.4.2}Running}{6}{subsection.2.4.2}%
 \contentsline {section}{\numberline {2.5}Future Plans}{6}{section.2.5}%
 \contentsline {subsection}{\numberline {2.5.1}Lists}{6}{subsection.2.5.1}%
-\contentsline {subsection}{\numberline {2.5.2}Bitonic Sort}{7}{subsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.5.2}Bitonic Sort}{6}{subsection.2.5.2}%
 \contentsline {subsection}{\numberline {2.5.3}Tiling}{7}{subsection.2.5.3}%
-\contentsline {subsection}{\numberline {2.5.4}Occlusion Queries}{7}{subsection.2.5.4}%
-\contentsline {section}{\numberline {2.6}Figures}{7}{section.2.6}%
+\contentsline {subsection}{\numberline {2.5.4}Hierarchical Depth Buffers}{7}{subsection.2.5.4}%
+\contentsline {subsection}{\numberline {2.5.5}Lighting}{7}{subsection.2.5.5}%
+\contentsline {section}{\numberline {2.6}Figures}{8}{section.2.6}%

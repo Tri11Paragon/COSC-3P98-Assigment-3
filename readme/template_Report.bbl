@@ -6,7 +6,6 @@ Mike Bailey.
 \newblock
   \url{"https://web.engr.oregonstate.edu/~mjb/cs519/Handouts/compute.shader.2pp.pdf"},
   2021.
-\newblock Accessed: 2023-04-01.
 
 \bibitem{glref}
 Krnonos Group.
@@ -33,5 +32,11 @@ Gareth Thomas.
 \newblock
   \url{"https://ubm-twvideo01.s3.amazonaws.com/o1/vault/GDC2014/Presentations/Gareth_Thomas_Compute-based_GPU_Particle.pdf"},
   2014.
+
+\bibitem{depth}
+Mike Turitzin.
+\newblock {Hierarchical Depth Buffers}.
+\newblock \url{"https://miketuritzin.com/post/hierarchical-depth-buffers/"},
+  2020.
 
 \end{thebibliography}
