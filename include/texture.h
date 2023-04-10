@@ -6,6 +6,8 @@
 #ifndef ASSIGN3_TEXTURE_H
 #define ASSIGN3_TEXTURE_H
 
+#include <glad/gl.h>
+
 #include <GL/glut.h>
 #include <GL/freeglut.h>
 #include <string>

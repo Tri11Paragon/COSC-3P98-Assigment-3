@@ -1,4 +1,3 @@
-#define GLAD_GL_IMPLEMENTATION
 #include <config.h>
 #ifdef EXTRAS
     //#include <modes/basic.h>
@@ -105,7 +104,13 @@ int main(int argc, char** argv) {
     glutCreateWindow(WINDOW_TITLE.c_str());
     BLT_DEBUG("Window successfully created!");
     
+    // i don't know why loading via glut fails on windows
+#ifdef __linux__
     int version = gladLoadGL(glutGetProcAddress);
+#else
+    // but using glad's loader *not reccomended when glutGetProcAddress exists* seems to work with my 1060 on win10
+    int version = gladLoaderLoadGL();
+#endif
     if (version == 0) {
         BLT_FATAL("Failed to initialize OpenGL context");
         return -1;
@@ -140,8 +145,10 @@ int main(int argc, char** argv) {
             fountain->toggleSpray();
         if (key == 't')
             fountain->toggleTexRandomizer();
+#ifdef EXTRAS
         if (key == 'p')
             beginExecution();
+#endif
     });
     glutSpecialFunc([](int k, int x, int y) -> void {
         cam.specialPress(k);
@@ -191,11 +198,13 @@ int main(int argc, char** argv) {
     
     init();
     
-    fountain = new particle_system({0, 1, 0}, {0, 1, 0}, 4.5, 5000);
+    fountain = new particle_system({0, 1, 0}, {0, 1, 0}, 4.5, 500);
     
     BLT_DEBUG("Resource initialization complete!");
     
     glutMainLoop();
+
+    gladLoaderUnloadGL();
 
     return 0;
 }

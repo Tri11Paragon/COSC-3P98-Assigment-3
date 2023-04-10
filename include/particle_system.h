@@ -51,6 +51,11 @@ class particle_system {
         blt::random<float> DIRECTION_RANDOMIZER{-1, 1};
         blt::random<float> TEXTURE_RANDOMIZER{0, 9};
         
+        /*
+         *
+         * spawns a new particle in the world using the particle system's origin and direction
+         *
+         */
         void spawnParticle() {
             auto* p = new particle_t;
             
@@ -70,6 +75,11 @@ class particle_system {
             particles[textureID].push_back(p);
         }
         
+        /*
+         * 
+         * returns the relative distance to between the particle pos and the provided pos
+         * 
+         */
         inline static double distance(const particle_t* p, const blt::vec3& pos){
             const auto ppos = p->pos;
             auto dx = ppos.x - pos.x();
@@ -78,12 +88,6 @@ class particle_system {
             return dx * dx + dy * dy + dz * dz;
         }
         
-        // vbo stuff
-        // if I had access to GL3.3+ I could instance the particles which would be much faster to render
-        // it wouldn't be hard as BLT has most of the math functions required and I could steal the
-        // shader loader / VAO object implementation from my final project but that's a TODO:
-        // the hard part is glut's apparent lack of gl3+ support
-        // -- apparently needed glad for this, maybe it is possible without switching to glfw
         unsigned int quad = 0;
         
         const float s = 0.5;
@@ -141,6 +145,7 @@ class particle_system {
                     
                     particle->dir = particle->dir + gravity_vec * frameDeltaSeconds;
                 }
+                // std::erase_if would be better here (c++20)
                 while (!deleteList.empty()) {
                     auto*& particle = deleteList.front();
                     
@@ -175,6 +180,7 @@ class particle_system {
         }
         
         inline static void applyBillboard() {
+            // i was going to merge the extra renderer into the particle system, but I have ran out of time as outlined.
 #ifndef EXTRAS
             GLfloat m[16];
             glMatrixMode(GL_MODELVIEW);

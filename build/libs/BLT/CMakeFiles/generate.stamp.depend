@@ -1,0 +1,7 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-3.24/Modules/FindPackageHandleStandardArgs.cmake
+C:/Program Files/CMake/share/cmake-3.24/Modules/FindPackageMessage.cmake
+C:/Program Files/CMake/share/cmake-3.24/Modules/FindZLIB.cmake
+C:/Program Files/CMake/share/cmake-3.24/Modules/SelectLibraryConfigurations.cmake
+C:/Users/uwu/Documents/Assignment 3/libs/BLT/CMakeLists.txt
+C:/Users/uwu/Documents/Assignment 3/libs/BLT/include/blt/config.h.in

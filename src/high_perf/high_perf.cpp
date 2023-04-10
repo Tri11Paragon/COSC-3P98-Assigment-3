@@ -300,7 +300,7 @@ void init() {
 }
 
 void cleanup() {
-    BLT_PRINT_PROFILE("Particles", blt::logging::NONE, true);
+    BLT_PRINT_PROFILE("Particles", blt::logging::BLT_NONE, true);
     // cleanup opengl resources
     glDeleteVertexArrays(1, &particleVAO);
     glDeleteBuffers(1, &particleTranslationsBuffer);
